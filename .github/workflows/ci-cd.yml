@@ -15,7 +15,10 @@ on:
         description: 'Type of run (quick or full)'
         required: true
         default: 'quick'
-
+        type: choice
+        options:
+          - quick
+          - full
 
 env:
   PYTHON_VERSION: '3.11'
