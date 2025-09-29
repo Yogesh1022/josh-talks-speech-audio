@@ -50,8 +50,8 @@ jobs:
     - name: 🧪 Run Scheduled Tests
       run: |
         echo "🧪 Running scheduled tests..."
-        python -c "
-import sys, time
+        cat > test_modules.py << 'EOF'
+import sys
 sys.path.append('src')
 
 print('🔍 Testing core modules...')
@@ -68,7 +68,7 @@ modules_tested += 1
 
 try:
     from disfluency_detector import DisfluencyDetector
-    print('✅ Disfluency detector: PASS')
+    print('✅ Disfluency detector: PASS') 
     modules_passed += 1
 except Exception as e:
     print(f'❌ Disfluency detector: FAIL - {e}')
@@ -84,7 +84,8 @@ modules_tested += 1
 
 print(f'📊 Results: {modules_passed}/{modules_tested} modules passed')
 exit(0 if modules_passed == modules_tested else 1)
-"
+EOF
+        python test_modules.py
 
   # ==========================================
   # Performance Check
@@ -112,7 +113,7 @@ exit(0 if modules_passed == modules_tested else 1)
     - name: 📊 Performance Check
       run: |
         echo "📊 Running performance checks..."
-        python -c "
+        cat > performance_check.py << 'EOF'
 import psutil
 import time
 import sys
@@ -133,7 +134,8 @@ try:
         print('⚠️ Slow performance')
 except Exception as e:
     print(f'❌ Performance test failed: {e}')
-"
+EOF
+        python performance_check.py
 
   # ==========================================
   # Health Summary

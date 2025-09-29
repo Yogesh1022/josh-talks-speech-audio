@@ -146,16 +146,8 @@ jobs:
     - name: 🔄 Test Pipeline Components
       run: |
         echo "🔄 Testing pipeline integration..."
-        python -c "
-import sys, os
-sys.path.append('src')
-try:
-    from model_evaluation import ModelManager
-    manager = ModelManager()
-    print('✅ Model manager working')
-except Exception as e:
-    print(f'⚠️ Model manager issue: {e}')
-"
+        python -c "import sys, os; sys.path.append('src')"
+        python -c "from model_evaluation import ModelManager; manager = ModelManager(); print('✅ Model manager working')" || echo "⚠️ Model manager issue"
 
   # ==========================================
   # Build Package

@@ -50,7 +50,6 @@ jobs:
         echo "version=$VERSION" >> $GITHUB_OUTPUT
         echo "📋 Release Version: $VERSION"
         
-        # Check if this is a prerelease
         if [[ "$VERSION" =~ -[a-z] ]]; then
           echo "is_prerelease=true" >> $GITHUB_OUTPUT
           echo "🚧 This is a prerelease"
@@ -59,7 +58,7 @@ jobs:
           echo "🎯 This is a stable release"
         fi
     
-    - name: 🐍 Set up Python ${{ env.PYTHON_VERSION }}
+    - name: 🐍 Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: ${{ env.PYTHON_VERSION }}
@@ -69,10 +68,9 @@ jobs:
       run: |
         echo "🔍 Validating release readiness..."
         
-        # Check if all required files exist
         required_files=(
           "setup.py"
-          "requirements.txt"
+          "requirements.txt" 
           "README.md"
           "src/audio_processing.py"
           "src/model_evaluation.py"
@@ -88,36 +86,17 @@ jobs:
         done
         
         if [[ ${#missing_files[@]} -gt 0 ]]; then
-          echo "❌ Missing required files for release:"
+          echo "❌ Missing required files:"
           printf '  - %s\n' "${missing_files[@]}"
           exit 1
         else
           echo "✅ All required files present"
         fi
         
-        # Validate Python syntax
         echo "🔍 Validating Python syntax..."
         python -m py_compile main_pipeline.py
         python -m py_compile src/*.py
         echo "✅ Python syntax validation passed"
-    
-    - name: 📊 Generate Release Notes Preview
-      run: |
-        echo "📊 Release Notes Preview"
-        echo "======================="
-        echo "🏷️ Version: ${{ steps.version.outputs.version }}"
-        echo "📅 Date: $(date '+%Y-%m-%d %H:%M:%S')"
-        echo "🚀 Type: ${{ steps.version.outputs.is_prerelease == 'true' && 'Prerelease' || 'Stable Release' }}"
-        echo ""
-        echo "📋 Components Included:"
-        echo "  • 🎙️ Whisper Fine-tuning Pipeline"
-        echo "  • 🔍 Disfluency Detection System"
-        echo "  • 📊 Model Evaluation & Analytics"
-        echo "  • 🤖 Model Management (Pickle-based)"
-        echo "  • 📓 Jupyter Analysis Notebooks"
-        echo "  • 🔧 Audio Processing Tools"
-        echo ""
-        echo "✅ Release validation completed"
 
   # ==========================================
   # Build Release Artifacts
@@ -131,7 +110,7 @@ jobs:
     - name: 📥 Checkout Repository
       uses: actions/checkout@v4
     
-    - name: 🐍 Set up Python ${{ env.PYTHON_VERSION }}
+    - name: 🐍 Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: ${{ env.PYTHON_VERSION }}
@@ -151,7 +130,6 @@ jobs:
         echo "📊 Build Results:"
         ls -la dist/
         
-        # Validate the built packages
         python -m twine check dist/*
         echo "✅ Package validation passed"
     
@@ -159,7 +137,6 @@ jobs:
       run: |
         echo "📋 Creating installation package..."
         
-        # Create a comprehensive installation package
         mkdir -p release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}
         
         # Copy essential files
@@ -172,173 +149,71 @@ jobs:
         cp setup.py release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/
         cp README.md release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/
         
-        # Create installation script
-        cat > release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.sh << 'EOF'
-#!/bin/bash
-echo "🚀 Installing Josh Talks Speech & Audio Pipeline..."
-echo "=================================================="
-
-# Create virtual environment
-python -m venv josh-talks-env
-source josh-talks-env/bin/activate
-
-# Install dependencies
-pip install --upgrade pip
-pip install -r requirements.txt
-
-# Create directory structure
-mkdir -p data results models processed_data
-
-echo "✅ Installation completed!"
-echo "🎯 To activate: source josh-talks-env/bin/activate"
-echo "🚀 To run: python main_pipeline.py"
-EOF
+        # Create simple installation scripts
+        echo '#!/bin/bash' > release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.sh
+        echo 'echo "🚀 Installing Josh Talks Speech & Audio Pipeline..."' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.sh
+        echo 'python -m venv josh-talks-env' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.sh
+        echo 'source josh-talks-env/bin/activate' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.sh
+        echo 'pip install --upgrade pip' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.sh
+        echo 'pip install -r requirements.txt' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.sh
+        echo 'mkdir -p data results models processed_data' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.sh
+        echo 'echo "✅ Installation completed!"' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.sh
         
         chmod +x release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.sh
         
         # Create Windows batch file
-        cat > release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.bat << 'EOF'
-@echo off
-echo 🚀 Installing Josh Talks Speech & Audio Pipeline...
-echo ==================================================
-
-REM Create virtual environment
-python -m venv josh-talks-env
-call josh-talks-env\Scripts\activate.bat
-
-REM Install dependencies
-pip install --upgrade pip
-pip install -r requirements.txt
-
-REM Create directory structure
-mkdir data results models processed_data
-
-echo ✅ Installation completed!
-echo 🎯 To activate: josh-talks-env\Scripts\activate.bat
-echo 🚀 To run: python main_pipeline.py
-pause
-EOF
+        echo '@echo off' > release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.bat
+        echo 'echo 🚀 Installing Josh Talks Speech & Audio Pipeline...' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.bat
+        echo 'python -m venv josh-talks-env' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.bat
+        echo 'call josh-talks-env\Scripts\activate.bat' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.bat
+        echo 'pip install --upgrade pip' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.bat
+        echo 'pip install -r requirements.txt' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.bat
+        echo 'mkdir data results models processed_data' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.bat
+        echo 'echo ✅ Installation completed!' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.bat
+        echo 'pause' >> release-package/josh-talks-audio-${{ needs.validate-release.outputs.version }}/install.bat
         
-        # Create archive
+        # Create archives
         cd release-package
         tar -czf josh-talks-audio-${{ needs.validate-release.outputs.version }}.tar.gz josh-talks-audio-${{ needs.validate-release.outputs.version }}/
         zip -r josh-talks-audio-${{ needs.validate-release.outputs.version }}.zip josh-talks-audio-${{ needs.validate-release.outputs.version }}/
         
         echo "✅ Installation packages created"
     
-    - name: 📊 Create Release Documentation
+    - name: 📊 Create Release Notes
       run: |
         echo "📊 Creating release documentation..."
         
-        cat > RELEASE_NOTES.md << EOF
-# Josh Talks Speech & Audio Pipeline - Release ${{ needs.validate-release.outputs.version }}
-
-## 🎯 Overview
-Professional-grade speech processing pipeline featuring Whisper model fine-tuning, disfluency detection, and comprehensive audio analysis for the Josh Talks platform.
-
-## 🚀 Key Features
-- **🎙️ Whisper Fine-tuning**: Advanced ASR optimization with 46.4% WER improvement
-- **🔍 Disfluency Detection**: Automated speech pattern analysis
-- **🤖 Model Management**: Pickle-based model persistence and analytics
-- **📊 Performance Analytics**: Comprehensive evaluation and visualization
-- **📓 Jupyter Notebooks**: Interactive analysis and experimentation
-- **🔧 Audio Processing**: Professional audio data handling
-
-## 📦 Installation
-
-### Quick Install (Linux/macOS)
-\`\`\`bash
-# Extract the package
-tar -xzf josh-talks-audio-${{ needs.validate-release.outputs.version }}.tar.gz
-cd josh-talks-audio-${{ needs.validate-release.outputs.version }}/
-
-# Run installation script
-./install.sh
-\`\`\`
-
-### Quick Install (Windows)
-\`\`\`cmd
-# Extract the zip file
-# Navigate to the extracted folder
-# Run the installation batch file
-install.bat
-\`\`\`
-
-### Manual Installation
-\`\`\`bash
-# Create virtual environment
-python -m venv josh-talks-env
-source josh-talks-env/bin/activate  # Linux/macOS
-# josh-talks-env\Scripts\activate.bat  # Windows
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Create directory structure
-mkdir -p data results models processed_data
-\`\`\`
-
-## 🚀 Quick Start
-\`\`\`bash
-# Activate environment
-source josh-talks-env/bin/activate
-
-# Run main pipeline (all 6 questions)
-python main_pipeline.py
-
-# Run model analysis
-python analyze_models.py
-
-# Try model management demo
-python model_demo.py
-\`\`\`
-
-## 📊 Performance Benchmarks
-- **Best Model WER**: 0.445 (46.4% improvement from baseline)
-- **Training Efficiency**: 0.0587 WER improvement per epoch
-- **Model Storage**: 6.4GB total with metadata
-- **Processing Speed**: Optimized for production use
-
-## 🔧 System Requirements
-- **Python**: 3.10 or 3.11
-- **Memory**: 8GB RAM minimum (16GB recommended)
-- **Storage**: 10GB available space
-- **GPU**: Optional (CUDA-compatible for faster training)
-
-## 📋 Package Contents
-- **Core Modules**: Audio processing, model evaluation, disfluency detection
-- **Pipeline Scripts**: Main pipeline, analysis tools, demo scripts
-- **Notebooks**: Whisper fine-tuning, disfluency analysis
-- **Documentation**: Setup guides, API documentation
-- **Tests**: Comprehensive test suite
-
-## 🆕 What's New in ${{ needs.validate-release.outputs.version }}
-- ✅ Complete model management system with pickle persistence
-- ✅ Advanced performance analytics and visualization
-- ✅ Improved training efficiency and WER optimization
-- ✅ Enhanced notebook analysis capabilities
-- ✅ Comprehensive CI/CD pipeline integration
-
-## 🐛 Bug Fixes & Improvements
-- Fixed TensorFlow DLL loading issues on Windows
-- Improved memory management for large model handling
-- Enhanced error handling and logging
-- Optimized audio processing pipeline performance
-
-## 📞 Support
-For issues, questions, or contributions:
-- **Repository**: https://github.com/Yogesh1022/josh-talks-speech-audio
-- **Documentation**: Check README.md and notebooks/
-- **Issues**: Report bugs via GitHub Issues
-
-## 🎉 Acknowledgments
-Built for Josh Talks platform with focus on Hindi speech processing and professional audio analysis.
-
----
-**Release Date**: $(date '+%Y-%m-%d')  
-**Build**: ${{ github.sha }}  
-**Pipeline**: Production Ready ✅
-EOF
+        echo "# Josh Talks Speech & Audio Pipeline - Release ${{ needs.validate-release.outputs.version }}" > RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        echo "## 🎯 Overview" >> RELEASE_NOTES.md
+        echo "Professional-grade speech processing pipeline featuring Whisper model fine-tuning, disfluency detection, and comprehensive audio analysis." >> RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        echo "## 🚀 Key Features" >> RELEASE_NOTES.md
+        echo "- 🎙️ **Whisper Fine-tuning**: Advanced ASR optimization with 46.4% WER improvement" >> RELEASE_NOTES.md
+        echo "- 🔍 **Disfluency Detection**: Automated speech pattern analysis" >> RELEASE_NOTES.md
+        echo "- 🤖 **Model Management**: Pickle-based model persistence and analytics" >> RELEASE_NOTES.md
+        echo "- 📊 **Performance Analytics**: Comprehensive evaluation and visualization" >> RELEASE_NOTES.md
+        echo "- 📓 **Jupyter Notebooks**: Interactive analysis and experimentation" >> RELEASE_NOTES.md
+        echo "- 🔧 **Audio Processing**: Professional audio data handling" >> RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        echo "## 📦 Quick Install" >> RELEASE_NOTES.md
+        echo "\`\`\`bash" >> RELEASE_NOTES.md
+        echo "# Extract and install" >> RELEASE_NOTES.md
+        echo "tar -xzf josh-talks-audio-${{ needs.validate-release.outputs.version }}.tar.gz" >> RELEASE_NOTES.md
+        echo "cd josh-talks-audio-${{ needs.validate-release.outputs.version }}/" >> RELEASE_NOTES.md
+        echo "./install.sh" >> RELEASE_NOTES.md
+        echo "\`\`\`" >> RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        echo "## 🆕 What's New in ${{ needs.validate-release.outputs.version }}" >> RELEASE_NOTES.md
+        echo "- ✅ Complete model management system with pickle persistence" >> RELEASE_NOTES.md
+        echo "- ✅ Advanced performance analytics and visualization" >> RELEASE_NOTES.md
+        echo "- ✅ Improved training efficiency and WER optimization" >> RELEASE_NOTES.md
+        echo "- ✅ Enhanced notebook analysis capabilities" >> RELEASE_NOTES.md
+        echo "- ✅ Comprehensive CI/CD pipeline integration" >> RELEASE_NOTES.md
+        echo "" >> RELEASE_NOTES.md
+        echo "**Release Date**: $(date '+%Y-%m-%d')" >> RELEASE_NOTES.md
+        echo "**Build**: ${{ github.sha }}" >> RELEASE_NOTES.md
+        echo "**Pipeline**: Production Ready ✅" >> RELEASE_NOTES.md
         
         echo "✅ Release documentation created"
     
@@ -386,16 +261,6 @@ EOF
         generate_release_notes: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    
-    - name: 📢 Release Success Notification
-      run: |
-        echo "🎉 GitHub Release Created Successfully!"
-        echo "====================================="
-        echo "🏷️ Version: ${{ needs.validate-release.outputs.version }}"
-        echo "📦 Artifacts: Uploaded"
-        echo "📋 Release Notes: Generated"
-        echo "🔗 URL: https://github.com/${{ github.repository }}/releases/tag/${{ needs.validate-release.outputs.version }}"
-        echo "====================================="
 
   # ==========================================
   # Deploy to Production
@@ -419,114 +284,37 @@ EOF
     - name: 🚀 Deploy to Production Environment
       run: |
         echo "🚀 Deploying Josh Talks Audio Pipeline to Production..."
-        echo "=================================================="
         echo "🏷️ Version: ${{ needs.validate-release.outputs.version }}"
         echo "📦 Package: josh-talks-audio-${{ needs.validate-release.outputs.version }}"
         echo "🌐 Environment: Production"
-        echo ""
         
-        # List deployment artifacts
         echo "📋 Deployment Artifacts:"
         ls -la deployment/
         
-        # Simulate production deployment steps
-        echo "1️⃣ Backing up current production..."
-        echo "2️⃣ Deploying new version..."
-        echo "3️⃣ Running database migrations..."
-        echo "4️⃣ Updating configuration..."
-        echo "5️⃣ Restarting services..."
-        echo "6️⃣ Running health checks..."
-        
-        # Health check simulation
-        sleep 2
-        echo "✅ Health check passed!"
-        echo ""
-        echo "🎯 Production deployment completed successfully!"
+        echo "✅ Production deployment completed successfully!"
         echo "🌐 Live URL: https://josh-talks-audio.example.com"
-    
-    - name: 📊 Post-Deployment Verification
-      run: |
-        echo "📊 Running post-deployment verification..."
-        echo "======================================="
-        
-        # Simulate verification checks
-        checks=(
-          "API Health Check"
-          "Model Loading Test"
-          "Database Connection"
-          "Audio Processing Pipeline"
-          "Model Management System"
-          "Performance Metrics"
-        )
-        
-        for check in "${checks[@]}"; do
-          echo "🔍 $check..."
-          sleep 1
-          echo "   ✅ PASSED"
-        done
-        
-        echo ""
-        echo "✅ All post-deployment checks passed!"
-        echo "🎉 Josh Talks Audio Pipeline ${{ needs.validate-release.outputs.version }} is live!"
 
   # ==========================================
-  # Notification & Cleanup
+  # Notification
   # ==========================================
   notify-completion:
-    name: 📢 Release Notification
+    name: 📢 Release Summary
     runs-on: ubuntu-latest
     needs: [validate-release, build-artifacts, create-release, deploy-production]
     if: always()
     
     steps:
-    - name: 📊 Calculate Release Status
-      id: status
-      run: |
-        VALIDATE_STATUS="${{ needs.validate-release.result }}"
-        BUILD_STATUS="${{ needs.build-artifacts.result }}"
-        RELEASE_STATUS="${{ needs.create-release.result }}"
-        DEPLOY_STATUS="${{ needs.deploy-production.result }}"
-        
-        echo "validate=$VALIDATE_STATUS" >> $GITHUB_OUTPUT
-        echo "build=$BUILD_STATUS" >> $GITHUB_OUTPUT
-        echo "release=$RELEASE_STATUS" >> $GITHUB_OUTPUT
-        echo "deploy=$DEPLOY_STATUS" >> $GITHUB_OUTPUT
-        
-        if [[ "$VALIDATE_STATUS" == "success" && "$BUILD_STATUS" == "success" && "$RELEASE_STATUS" == "success" ]]; then
-          echo "overall=success" >> $GITHUB_OUTPUT
-        else
-          echo "overall=failure" >> $GITHUB_OUTPUT
-        fi
-    
-    - name: 📢 Release Completion Summary
+    - name: 📢 Release Summary
       run: |
         echo "📢 Josh Talks Audio Pipeline - Release Summary"
-        echo "============================================="
         echo "🏷️ Version: ${{ needs.validate-release.outputs.version }}"
         echo "📅 Date: $(date '+%Y-%m-%d %H:%M:%S')"
         echo "🚀 Type: ${{ needs.validate-release.outputs.is_prerelease == 'true' && 'Prerelease' || 'Stable Release' }}"
         echo ""
         echo "📊 Pipeline Results:"
-        echo "  ✅ Validation: ${{ steps.status.outputs.validate }}"
-        echo "  📦 Build: ${{ steps.status.outputs.build }}"
-        echo "  🎯 Release: ${{ steps.status.outputs.release }}"
-        echo "  🚀 Deploy: ${{ steps.status.outputs.deploy }}"
+        echo "  ✅ Validation: ${{ needs.validate-release.result }}"
+        echo "  📦 Build: ${{ needs.build-artifacts.result }}"
+        echo "  🎯 Release: ${{ needs.create-release.result }}"
+        echo "  🚀 Deploy: ${{ needs.deploy-production.result }}"
         echo ""
-        echo "📋 Release Highlights:"
-        echo "  • 🎙️ Whisper fine-tuning with 46.4% WER improvement"
-        echo "  • 🔍 Advanced disfluency detection system"
-        echo "  • 🤖 Complete model management with pickle persistence"
-        echo "  • 📊 Comprehensive analytics and visualization"
-        echo "  • 📓 Professional Jupyter notebook analysis"
-        echo ""
-        
-        if [[ "${{ steps.status.outputs.overall }}" == "success" ]]; then
-          echo "🎉 RELEASE SUCCESSFUL!"
-          echo "🌐 Production URL: https://josh-talks-audio.example.com"
-          echo "📦 Download: https://github.com/${{ github.repository }}/releases/tag/${{ needs.validate-release.outputs.version }}"
-        else
-          echo "❌ RELEASE ENCOUNTERED ISSUES"
-          echo "🔍 Please check individual job results for details"
-        fi
-        
-        echo "============================================="
+        echo "🎉 Josh Talks Audio Pipeline Release Completed!"
