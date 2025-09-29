@@ -107,7 +107,7 @@ jobs:
         
         # Always run basic import tests as fallback
         echo "Running basic import validation..."
-        python -c "
+        cat > test_imports.py << 'EOF'
 import sys
 import os
 sys.path.insert(0, os.path.join(os.getcwd(), 'src'))
@@ -132,7 +132,8 @@ except Exception as e:
     print(f'⚠️ DisfluencyDetector import issue: {e}')
 
 print('✅ Basic validation completed')
-"
+EOF
+        python test_imports.py
     
     - name: 📤 Upload Test Results
       if: always()
