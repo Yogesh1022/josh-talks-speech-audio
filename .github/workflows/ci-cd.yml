@@ -102,41 +102,17 @@ jobs:
         echo "Setting up Python path..."
         export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
         
-        # Try to run proper tests first
         if [ -d "tests" ] && [ -n "$(find tests -name 'test_*.py')" ]; then
           echo "Found test files, running pytest..."
           pytest tests/ -v --tb=short --continue-on-collection-errors || echo "Pytest had issues, continuing..."
         fi
         
-        # Always run basic import tests as fallback
         echo "Running basic import validation..."
-        cat > test_imports.py << 'EOF'
-import sys
-import os
-sys.path.insert(0, os.path.join(os.getcwd(), 'src'))
-print('✅ Python path configured')
-
-try:
-    from model_evaluation import ModelManager
-    print('✅ ModelManager imported successfully')
-except Exception as e:
-    print(f'⚠️ ModelManager import issue: {e}')
-
-try:
-    from audio_processing import DatasetAudioProcessor
-    print('✅ DatasetAudioProcessor imported successfully')
-except Exception as e:
-    print(f'⚠️ DatasetAudioProcessor import issue: {e}')
-
-try:
-    from disfluency_detector import DisfluencyDetector
-    print('✅ DisfluencyDetector imported successfully')
-except Exception as e:
-    print(f'⚠️ DisfluencyDetector import issue: {e}')
-
-print('✅ Basic validation completed')
-EOF
-        python test_imports.py
+        python -c "import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), 'src')); print('✅ Python path configured')"
+        python -c "from model_evaluation import ModelManager; print('✅ ModelManager imported successfully')" || echo "⚠️ ModelManager import issue"
+        python -c "from audio_processing import DatasetAudioProcessor; print('✅ DatasetAudioProcessor imported successfully')" || echo "⚠️ DatasetAudioProcessor import issue"
+        python -c "from disfluency_detector import DisfluencyDetector; print('✅ DisfluencyDetector imported successfully')" || echo "⚠️ DisfluencyDetector import issue"
+        echo "✅ Basic validation completed"
     
     - name: 📤 Upload Test Results
       if: always()
@@ -188,7 +164,7 @@ EOF
     - name: 🔄 Test Pipeline Components
       run: |
         echo "🔄 Testing pipeline integration..."
-        python -c "import sys, os; sys.path.append('src')"
+        export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
         python -c "from model_evaluation import ModelManager; manager = ModelManager(); print('✅ Model manager working')" || echo "⚠️ Model manager issue"
 
   # ==========================================
