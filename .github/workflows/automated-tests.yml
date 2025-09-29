@@ -50,7 +50,7 @@ jobs:
     - name: 🧪 Run Scheduled Tests
       run: |
         echo "🧪 Running scheduled tests..."
-        export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
+        export PYTHONPATH="$(pwd)/src:$PYTHONPATH"
         
         echo "🔍 Testing core modules..."
         modules_tested=0
@@ -115,7 +115,7 @@ jobs:
     - name: 📊 Performance Check
       run: |
         echo "📊 Running performance checks..."
-        export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
+        export PYTHONPATH="$(pwd)/src:$PYTHONPATH"
         
         echo "💾 System Resources:"
         python -c "import psutil; print(f'CPU: {psutil.cpu_percent(interval=1):.1f}%'); print(f'Memory: {psutil.virtual_memory().percent:.1f}%')" || echo "⚠️ psutil not available"
