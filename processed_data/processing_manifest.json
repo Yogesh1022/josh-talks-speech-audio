@@ -1,0 +1,88 @@
+{
+  "total_files": 10,
+  "processed": 10,
+  "failed": 0,
+  "total_duration": 148.02625,
+  "processed_files": [
+    {
+      "recording_id": 1,
+      "user_id": 1,
+      "audio_path": "processed_data\\1_processed.wav",
+      "transcription": "\u0939\u092e\u0947\u0902 \u0905\u092a\u0928\u0947 \u0932\u0915\u094d\u0937\u094d\u092f\u094b\u0902 \u092a\u0930 \u092b\u094b\u0915\u0938 \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u093f\u090f",
+      "duration": 8.5285,
+      "language": "hi"
+    },
+    {
+      "recording_id": 2,
+      "user_id": 2,
+      "audio_path": "processed_data\\2_processed.wav",
+      "transcription": "\u0928\u092e\u0938\u094d\u0924\u0947 \u092e\u0948\u0902 \u0906\u091c \u0906\u092a\u0915\u094b \u090f\u0915 \u0928\u0908 \u092c\u093e\u0924 \u092c\u0924\u093e\u0928\u093e \u091a\u093e\u0939\u0924\u093e \u0939\u0942\u0902",
+      "duration": 19.1213125,
+      "language": "hi"
+    },
+    {
+      "recording_id": 3,
+      "user_id": 1,
+      "audio_path": "processed_data\\3_processed.wav",
+      "transcription": "\u0939\u092e\u0947\u0902 \u0905\u092a\u0928\u0947 \u0932\u0915\u094d\u0937\u094d\u092f\u094b\u0902 \u092a\u0930 \u092b\u094b\u0915\u0938 \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u093f\u090f",
+      "duration": 18.0761875,
+      "language": "hi"
+    },
+    {
+      "recording_id": 4,
+      "user_id": 3,
+      "audio_path": "processed_data\\4_processed.wav",
+      "transcription": "\u092f\u0939 \u092c\u0939\u0941\u0924 \u092e\u0939\u0924\u094d\u0935\u092a\u0942\u0930\u094d\u0923 \u091c\u093e\u0928\u0915\u093e\u0930\u0940 \u0939\u0948 \u091c\u094b \u0938\u092d\u0940 \u0915\u094b \u091c\u093e\u0928\u0928\u0940 \u091a\u093e\u0939\u093f\u090f",
+      "duration": 18.5165,
+      "language": "hi"
+    },
+    {
+      "recording_id": 5,
+      "user_id": 2,
+      "audio_path": "processed_data\\5_processed.wav",
+      "transcription": "\u092f\u0939 \u092c\u0939\u0941\u0924 \u092e\u0939\u0924\u094d\u0935\u092a\u0942\u0930\u094d\u0923 \u091c\u093e\u0928\u0915\u093e\u0930\u0940 \u0939\u0948 \u091c\u094b \u0938\u092d\u0940 \u0915\u094b \u091c\u093e\u0928\u0928\u0940 \u091a\u093e\u0939\u093f\u090f",
+      "duration": 6.5085,
+      "language": "hi"
+    },
+    {
+      "recording_id": 6,
+      "user_id": 4,
+      "audio_path": "processed_data\\6_processed.wav",
+      "transcription": "\u092f\u0939 \u092c\u0939\u0941\u0924 \u092e\u0939\u0924\u094d\u0935\u092a\u0942\u0930\u094d\u0923 \u091c\u093e\u0928\u0915\u093e\u0930\u0940 \u0939\u0948 \u091c\u094b \u0938\u092d\u0940 \u0915\u094b \u091c\u093e\u0928\u0928\u0940 \u091a\u093e\u0939\u093f\u090f",
+      "duration": 9.84225,
+      "language": "hi"
+    },
+    {
+      "recording_id": 7,
+      "user_id": 3,
+      "audio_path": "processed_data\\7_processed.wav",
+      "transcription": "\u092f\u0939 \u092c\u0939\u0941\u0924 \u092e\u0939\u0924\u094d\u0935\u092a\u0942\u0930\u094d\u0923 \u091c\u093e\u0928\u0915\u093e\u0930\u0940 \u0939\u0948 \u091c\u094b \u0938\u092d\u0940 \u0915\u094b \u091c\u093e\u0928\u0928\u0940 \u091a\u093e\u0939\u093f\u090f",
+      "duration": 11.2056875,
+      "language": "hi"
+    },
+    {
+      "recording_id": 8,
+      "user_id": 5,
+      "audio_path": "processed_data\\8_processed.wav",
+      "transcription": "\u0939\u092e\u0947\u0902 \u0905\u092a\u0928\u0947 \u0932\u0915\u094d\u0937\u094d\u092f\u094b\u0902 \u092a\u0930 \u092b\u094b\u0915\u0938 \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u093f\u090f",
+      "duration": 19.387625,
+      "language": "hi"
+    },
+    {
+      "recording_id": 9,
+      "user_id": 4,
+      "audio_path": "processed_data\\9_processed.wav",
+      "transcription": "\u0928\u092e\u0938\u094d\u0924\u0947 \u092e\u0948\u0902 \u0906\u091c \u0906\u092a\u0915\u094b \u090f\u0915 \u0928\u0908 \u092c\u093e\u0924 \u092c\u0924\u093e\u0928\u093e \u091a\u093e\u0939\u0924\u093e \u0939\u0942\u0902",
+      "duration": 19.912125,
+      "language": "hi"
+    },
+    {
+      "recording_id": 10,
+      "user_id": 5,
+      "audio_path": "processed_data\\10_processed.wav",
+      "transcription": "\u0906\u091c\u0915\u0932 \u091f\u0947\u0915\u094d\u0928\u094b\u0932\u0949\u091c\u0940 \u092c\u0939\u0941\u0924 \u0924\u0947\u091c\u0940 \u0938\u0947 \u092c\u0922\u093c \u0930\u0939\u0940 \u0939\u0948",
+      "duration": 16.9275625,
+      "language": "hi"
+    }
+  ]
+}

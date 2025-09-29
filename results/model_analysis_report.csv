@@ -1,0 +1,7 @@
+Model Name,WER,Epochs,Learning Rate,Batch Size,Dataset Size,Duration (hours),Model Type,Optimization,File Size (MB),Created
+whisper_hindi_experimental_v3,0.445,8,2e-06,32,50,0.275,experimental,advanced_augmentation_curriculum_learning,1074.2661628723145,20250928_235947
+whisper_hindi_optimized_v2,0.587,5,5e-06,16,25,0.125,optimized,data_augmentation,1074.266134262085,20250928_235946
+whisper_hindi_fine_tuned_v1,0.654,3,1e-05,8,10,0.039,fine_tuned,standard_training,1074.2661361694336,20250928_235944
+whisper_hindi_baseline,0.83,0,0.0,0,0,0.0,pretrained_baseline,none,1074.2660932540894,20250928_235943
+whisper_hindi_baseline,0.83,0,0.0,0,0,0.0,pretrained_baseline,none,1074.2660932540894,20250928_235830
+whisper_hindi_fine_tuned,0.654,3,1e-05,8,10,0.04111840277777778,unknown,none,1074.2660751342773,20250928_235829

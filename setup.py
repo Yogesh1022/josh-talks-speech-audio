@@ -1,0 +1,37 @@
+from setuptools import setup, find_packages
+
+setup(
+    name="josh-talks-speech-audio",
+    version="1.0.0",
+    description="AI Researcher Intern Project for Speech & Audio at Josh Talks",
+    author="AI Research Intern",
+    packages=find_packages(),
+    install_requires=[
+        "transformers>=4.35.0",
+        "datasets>=2.14.0",
+        "torch>=2.0.0",
+        "torchaudio>=2.0.0",
+        "librosa>=0.10.1",
+        "soundfile>=0.12.1",
+        "jiwer>=3.0.3",
+        "pandas>=2.0.3",
+        "numpy>=1.24.3",
+        "openpyxl>=3.1.2",
+        "pyenchant>=3.2.2",
+        "matplotlib>=3.7.2",
+        "seaborn>=0.12.2",
+        "scikit-learn>=1.3.0",
+        "scipy>=1.11.1",
+        "accelerate>=0.23.0",
+        "evaluate>=0.4.0",
+    ],
+    python_requires=">=3.8",
+    classifiers=[
+        "Development Status :: 4 - Beta",
+        "Intended Audience :: Developers",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+    ],
+)
