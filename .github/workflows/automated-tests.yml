@@ -50,42 +50,44 @@ jobs:
     - name: 🧪 Run Scheduled Tests
       run: |
         echo "🧪 Running scheduled tests..."
-        cat > test_modules.py << 'EOF'
-import sys
-sys.path.append('src')
-
-print('🔍 Testing core modules...')
-modules_tested = 0
-modules_passed = 0
-
-try:
-    from audio_processing import DatasetAudioProcessor
-    print('✅ Audio processing: PASS')
-    modules_passed += 1
-except Exception as e:
-    print(f'❌ Audio processing: FAIL - {e}')
-modules_tested += 1
-
-try:
-    from disfluency_detector import DisfluencyDetector
-    print('✅ Disfluency detector: PASS') 
-    modules_passed += 1
-except Exception as e:
-    print(f'❌ Disfluency detector: FAIL - {e}')
-modules_tested += 1
-
-try:
-    from model_evaluation import ModelManager
-    print('✅ Model evaluation: PASS')
-    modules_passed += 1
-except Exception as e:
-    print(f'❌ Model evaluation: FAIL - {e}')
-modules_tested += 1
-
-print(f'📊 Results: {modules_passed}/{modules_tested} modules passed')
-exit(0 if modules_passed == modules_tested else 1)
-EOF
-        python test_modules.py
+        export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
+        
+        echo "🔍 Testing core modules..."
+        modules_tested=0
+        modules_passed=0
+        
+        echo "Testing audio_processing module..."
+        if python -c "from audio_processing import DatasetAudioProcessor; print('✅ Audio processing: PASS')"; then
+          modules_passed=$((modules_passed + 1))
+        else
+          echo "❌ Audio processing: FAIL"
+        fi
+        modules_tested=$((modules_tested + 1))
+        
+        echo "Testing disfluency_detector module..."
+        if python -c "from disfluency_detector import DisfluencyDetector; print('✅ Disfluency detector: PASS')"; then
+          modules_passed=$((modules_passed + 1))
+        else
+          echo "❌ Disfluency detector: FAIL"
+        fi
+        modules_tested=$((modules_tested + 1))
+        
+        echo "Testing model_evaluation module..."
+        if python -c "from model_evaluation import ModelManager; print('✅ Model evaluation: PASS')"; then
+          modules_passed=$((modules_passed + 1))
+        else
+          echo "❌ Model evaluation: FAIL"
+        fi
+        modules_tested=$((modules_tested + 1))
+        
+        echo "📊 Results: $modules_passed/$modules_tested modules passed"
+        if [ $modules_passed -eq $modules_tested ]; then
+          echo "✅ All tests passed!"
+          exit 0
+        else
+          echo "❌ Some tests failed"
+          exit 1
+        fi
 
   # ==========================================
   # Performance Check
@@ -113,29 +115,13 @@ EOF
     - name: 📊 Performance Check
       run: |
         echo "📊 Running performance checks..."
-        cat > performance_check.py << 'EOF'
-import psutil
-import time
-import sys
-
-print('💾 System Resources:')
-print(f'CPU: {psutil.cpu_percent(interval=1):.1f}%')
-print(f'Memory: {psutil.virtual_memory().percent:.1f}%')
-
-sys.path.append('src')
-start = time.time()
-try:
-    from model_evaluation import ModelManager
-    load_time = time.time() - start
-    print(f'⏱️ ModelManager load: {load_time:.3f}s')
-    if load_time < 5.0:
-        print('✅ Performance OK')
-    else:
-        print('⚠️ Slow performance')
-except Exception as e:
-    print(f'❌ Performance test failed: {e}')
-EOF
-        python performance_check.py
+        export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
+        
+        echo "💾 System Resources:"
+        python -c "import psutil; print(f'CPU: {psutil.cpu_percent(interval=1):.1f}%'); print(f'Memory: {psutil.virtual_memory().percent:.1f}%')" || echo "⚠️ psutil not available"
+        
+        echo "⏱️ Testing ModelManager load time..."
+        python -c "import time; start = time.time(); from model_evaluation import ModelManager; load_time = time.time() - start; print(f'⏱️ ModelManager load: {load_time:.3f}s'); print('✅ Performance OK' if load_time < 5.0 else '⚠️ Slow performance')" || echo "❌ Performance test failed"
 
   # ==========================================
   # Health Summary
