@@ -120,7 +120,15 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install build wheel setuptools twine
-        pip install -r requirements.txt
+        echo "Installing project dependencies..."
+        if pip install -r requirements-ci.txt; then
+          echo "✅ CI dependencies installed"
+        elif pip install -r requirements.txt; then
+          echo "✅ Full dependencies installed"
+        else
+          echo "⚠️ Installing minimal dependencies"
+          pip install pandas numpy transformers datasets torch librosa soundfile jiwer openpyxl || echo "⚠️ Some dependencies failed"
+        fi
     
     - name: 🔨 Build Python Package
       run: |
