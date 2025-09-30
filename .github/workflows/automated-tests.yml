@@ -58,14 +58,21 @@ jobs:
     - name: 🧪 Run Scheduled Tests
       run: |
         echo "🧪 Running scheduled tests..."
-        export PYTHONPATH="$(pwd)/src:$PYTHONPATH"
+        export PYTHONPATH="$(pwd)/src:$(pwd):$PYTHONPATH"
+        
+        echo "🔍 Debug: Current directory and Python path"
+        pwd
+        echo "PYTHONPATH: $PYTHONPATH"
+        ls -la src/
+        echo "Testing basic Python imports..."
+        python -c "import pandas, numpy, re, unicodedata, os, json; print('✅ Basic dependencies available')" || echo "❌ Basic dependencies missing"
         
         echo "🔍 Testing core modules..."
         modules_tested=0
         modules_passed=0
         
         echo "Testing audio_processing module..."
-        if python -c "from audio_processing import DatasetAudioProcessor; print('✅ Audio processing: PASS')"; then
+        if python -c "import sys; sys.path.insert(0, 'src'); from audio_processing import DatasetAudioProcessor; print('✅ Audio processing: PASS')"; then
           modules_passed=$((modules_passed + 1))
         else
           echo "❌ Audio processing: FAIL"
@@ -73,15 +80,25 @@ jobs:
         modules_tested=$((modules_tested + 1))
         
         echo "Testing disfluency_detector module..."
-        if python -c "from disfluency_detector import HindiDisfluencyDetector; print('✅ Disfluency detector: PASS')"; then
-          modules_passed=$((modules_passed + 1))
+        echo "Debug: Testing basic module import first..."
+        if python -c "import sys; sys.path.insert(0, 'src'); import disfluency_detector; print('Module imported successfully')"; then
+          echo "✅ Module imports successfully"
+          if python -c "import sys; sys.path.insert(0, 'src'); from disfluency_detector import HindiDisfluencyDetector; print('✅ Disfluency detector: PASS')"; then
+            modules_passed=$((modules_passed + 1))
+          else
+            echo "❌ Disfluency detector class import: FAIL"
+            echo "Debug: Attempting to list available classes in disfluency_detector"
+            python -c "import sys; sys.path.insert(0, 'src'); import disfluency_detector; print('Available in module:', [x for x in dir(disfluency_detector) if not x.startswith('_')])" || echo "Module listing failed"
+          fi
         else
-          echo "❌ Disfluency detector: FAIL"
+          echo "❌ Disfluency detector module: FAIL"
+          echo "Debug: Checking if src directory contains the file..."
+          ls -la src/disfluency_detector.py || echo "File not found"
         fi
         modules_tested=$((modules_tested + 1))
         
         echo "Testing model_evaluation module..."
-        if python -c "from model_evaluation import ModelManager; print('✅ Model evaluation: PASS')"; then
+        if python -c "import sys; sys.path.insert(0, 'src'); from model_evaluation import ModelManager; print('✅ Model evaluation: PASS')"; then
           modules_passed=$((modules_passed + 1))
         else
           echo "❌ Model evaluation: FAIL"

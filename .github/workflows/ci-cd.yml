@@ -120,9 +120,9 @@ jobs:
         
         echo "Running basic import validation..."
         python -c "import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), 'src')); print('✅ Python path configured')"
-        python -c "from model_evaluation import ModelManager; print('✅ ModelManager imported successfully')" || echo "⚠️ ModelManager import issue"
-        python -c "from audio_processing import DatasetAudioProcessor; print('✅ DatasetAudioProcessor imported successfully')" || echo "⚠️ DatasetAudioProcessor import issue"
-        python -c "from disfluency_detector import HindiDisfluencyDetector; print('✅ HindiDisfluencyDetector imported successfully')" || echo "⚠️ HindiDisfluencyDetector import issue"
+        python -c "import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), 'src')); from model_evaluation import ModelManager; print('✅ ModelManager imported successfully')" || echo "⚠️ ModelManager import issue"
+        python -c "import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), 'src')); from audio_processing import DatasetAudioProcessor; print('✅ DatasetAudioProcessor imported successfully')" || echo "⚠️ DatasetAudioProcessor import issue"
+        python -c "import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), 'src')); from disfluency_detector import HindiDisfluencyDetector; print('✅ HindiDisfluencyDetector imported successfully')" || echo "⚠️ HindiDisfluencyDetector import issue"
         echo "✅ Basic validation completed"
     
     - name: 📤 Upload Test Results
@@ -184,17 +184,17 @@ jobs:
     - name: 🔄 Test Pipeline Components
       run: |
         echo "🔄 Testing pipeline integration..."
-        export PYTHONPATH="${PYTHONPATH}:$(pwd)/src"
+        export PYTHONPATH="$(pwd)/src:$(pwd):$PYTHONPATH"
         
         echo "Testing core component integration..."
-        python -c "from model_evaluation import ModelManager; manager = ModelManager(); print('✅ Model manager working')" || echo "⚠️ Model manager issue"
-        python -c "from audio_processing import DatasetAudioProcessor; processor = DatasetAudioProcessor(); print('✅ Audio processor working')" || echo "⚠️ Audio processor issue"
+        python -c "import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), 'src')); from model_evaluation import ModelManager; manager = ModelManager(); print('✅ Model manager working')" || echo "⚠️ Model manager issue"
+        python -c "import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), 'src')); from audio_processing import DatasetAudioProcessor; processor = DatasetAudioProcessor(); print('✅ Audio processor working')" || echo "⚠️ Audio processor issue"
         
         # Test disfluency detector with fallback
         if [ -f "data/Speech-Disfluencies-List.xlsx" ]; then
-          python -c "from disfluency_detector import HindiDisfluencyDetector; detector = HindiDisfluencyDetector('data/Speech-Disfluencies-List.xlsx'); print('✅ Disfluency detector working')" || echo "⚠️ Disfluency detector issue"
+          python -c "import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), 'src')); from disfluency_detector import HindiDisfluencyDetector; detector = HindiDisfluencyDetector('data/Speech-Disfluencies-List.xlsx'); print('✅ Disfluency detector working')" || echo "⚠️ Disfluency detector issue"
         else
-          python -c "from disfluency_detector import HindiDisfluencyDetector; print('✅ Disfluency detector class imported')" || echo "⚠️ Disfluency detector import issue"
+          python -c "import sys, os; sys.path.insert(0, os.path.join(os.getcwd(), 'src')); from disfluency_detector import HindiDisfluencyDetector; print('✅ Disfluency detector class imported')" || echo "⚠️ Disfluency detector import issue"
         fi
         
         echo "✅ Basic integration test completed"
